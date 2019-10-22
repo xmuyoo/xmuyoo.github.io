@@ -103,7 +103,7 @@
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Search" href="javascript:;">
+            <a class="navbar-item search" title="Buscar" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -142,7 +142,7 @@
         <span class="column is-narrow">
             
             
-            14 minutes read (About 2102 words)
+            14 minutes de lectura (Alrededor de 2103 palabras)
         </span>
         
     </div>
@@ -151,6 +151,8 @@
         <h2 id="流计算中的-Window"><a href="#流计算中的-Window" class="headerlink" title="流计算中的 Window"></a>流计算中的 Window</h2><p>首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。</p>
 <p>数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。</p>
 <p>Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，目的是得到一个有边界的数据集合。因为 Window 有边界，所以被划到一个 Window 中的数据集合也变成了有边界、有限的。现在，有边界的计算就能够处理这同样有边界的数据集合了。</p>
+<a id="more"></a>
+
 <p>流计算中，定义 Window 边界的维度只有：时间。一个 Window 的下界是较早的时间点，上界是较晚的时间点。在某一时刻去观察一个 Window 时，它的上下界是确定的，被它的上下界划定的数据集合是确定的。而定义一个 Window 的长度的维度有：时间或元素数量。</p>
 <h2 id="Flink-中的-Window"><a href="#Flink-中的-Window" class="headerlink" title="Flink 中的 Window"></a>Flink 中的 Window</h2><p>在 Flink 中，Window 的概念与上面解释的概念并无区别，只是作为流计算的工程实现结果，Flink 对 Window 在具体表现方式上定义了不同的类型。</p>
 <h3 id="Window-的种类"><a href="#Window-的种类" class="headerlink" title="Window 的种类"></a>Window 的种类</h3><p><strong>Time Tumbling Window</strong> 是一种边界相对固定的窗口，其它一些地方也称之为 Fixed Window。这种窗口的特点是：若有多个窗口，它们各自定义的时间范围不会有交集：</p>
@@ -399,7 +401,7 @@
     <div class="searchbox-mask"></div>
     <div class="searchbox-container ins-search-container">
         <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Escribe algo..." />
             <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="searchbox-result-wrapper ins-section-wrapper">
@@ -412,10 +414,10 @@
         var INSIGHT_CONFIG = {
             TRANSLATION: {
                 POSTS: 'Posts',
-                PAGES: 'Pages',
-                CATEGORIES: 'Categories',
+                PAGES: 'Páginas',
+                CATEGORIES: 'Categorías',
                 TAGS: 'Tags',
-                UNTITLED: '(Untitled)',
+                UNTITLED: '(Sin título)',
             },
             CONTENT_URL: '/content.json',
         };
