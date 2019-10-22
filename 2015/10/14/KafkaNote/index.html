@@ -2,7 +2,7 @@
 <html class="has-navbar-fixed-top">
 <head>
     <meta charset="utf-8">
-<title>Kafka 基本概念 - 潇慕雨Muyoo</title>
+<title>Kafka 基本概念 - 潇慕雨 Muyoo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
@@ -21,16 +21,16 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kafka 基本概念">
 <meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2015&#x2F;10&#x2F;14&#x2F;KafkaNote&#x2F;index.html">
-<meta property="og:site_name" content="潇慕雨Muyoo">
+<meta property="og:site_name" content="潇慕雨 Muyoo">
 <meta property="og:description" content="（Kafka版本 0.8.2.1） Kafka框架下的基本工作模式Kafka是一个消息处理系统。从大面上看，产生消息数据的生产者（Producer）将数据推送到Kafka集群，Kafka集群将消息数据保留起来；然后消费消息数据的消费者（Consumer）向Kafka集群发起请求来消费数据。如图：">
-<meta property="og:locale" content="en">
-<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;藏地旅行125.jpg">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;%E8%97%8F%E5%9C%B0%E6%97%85%E8%A1%8C125.jpg">
 <meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;kafka-producer_consumer.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;kafka-log_anatomy.png">
 <meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;kafka-consumer-groups.png">
 <meta property="og:updated_time" content="2015-10-14T04:00:46.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;藏地旅行125.jpg">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;%E8%97%8F%E5%9C%B0%E6%97%85%E8%A1%8C125.jpg">
 
 
 
@@ -97,13 +97,16 @@
                href="/categories">Technology</a>
             
             <a class="navbar-item "
+               href="/tags">Tags</a>
+            
+            <a class="navbar-item "
                href="/about">About</a>
             
         </div>
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Search" href="javascript:;" target="_blank" rel="noopener">
+            <a class="navbar-item search" title="Search" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -148,8 +151,10 @@
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
-        <p><img src="http://7vzs9m.com1.z0.glb.clouddn.com/藏地旅行125.jpg" alt=" 每次旅行都能让我回味到下次旅行时，罗布林卡的花真漂亮 - By Muyoo"><br>（Kafka版本 0.8.2.1）</p>
-<h3 id="Kafka框架下的基本工作模式"><a href="#Kafka框架下的基本工作模式" class="headerlink" title="Kafka框架下的基本工作模式"></a>Kafka框架下的基本工作模式</h3><p>Kafka是一个消息处理系统。从大面上看，产生消息数据的生产者（Producer）将数据推送到Kafka集群，Kafka集群将消息数据保留起来；然后消费消息数据的消费者（Consumer）向Kafka集群发起请求来消费数据。如图：<br><img src="http://7vzs9m.com1.z0.glb.clouddn.com/kafka-producer_consumer.png" alt="from Apache Kafka"><br><a id="more"></a></p>
+        <p><img src="http://7vzs9m.com1.z0.glb.clouddn.com/%E8%97%8F%E5%9C%B0%E6%97%85%E8%A1%8C125.jpg" alt=" 每次旅行都能让我回味到下次旅行时，罗布林卡的花真漂亮 - By Muyoo"><br>（Kafka版本 0.8.2.1）</p>
+<h3 id="Kafka框架下的基本工作模式"><a href="#Kafka框架下的基本工作模式" class="headerlink" title="Kafka框架下的基本工作模式"></a>Kafka框架下的基本工作模式</h3><p>Kafka是一个消息处理系统。从大面上看，产生消息数据的生产者（Producer）将数据推送到Kafka集群，Kafka集群将消息数据保留起来；然后消费消息数据的消费者（Consumer）向Kafka集群发起请求来消费数据。如图：<br><img src="http://7vzs9m.com1.z0.glb.clouddn.com/kafka-producer_consumer.png" alt="from Apache Kafka"></p>
+<a id="more"></a>
+
 <h3 id="Kafka基本数据结构"><a href="#Kafka基本数据结构" class="headerlink" title="Kafka基本数据结构"></a>Kafka基本数据结构</h3><p>消息数据在Kafka中先按照指定的名称进入一组消息队列，这组消息队列有统一的名称。在Kafka中，这样的消息队列组称为Topic。在每个Topic中有多个消息队列partition。每条消息进入Kafka后，按照key被分配到某个partition中，添加到队列的末尾。如下图：<br><img src="http://7vzs9m.com1.z0.glb.clouddn.com/kafka-log_anatomy.png" alt="from Apache Kafka"><br>对每个partition中的每条数据，kafka会维护一个它在队列中的偏移量（可以理解为类似数组下标的东西）；consumer通过偏移量来读取指定的数据。<br>对于进入Kafka的数据，Kafka会保留一段时间；过了这段时间后，Kafka就会删除最早的一条数据，也就是从队列头的数据。（保留的时间长短可以通过配置文件设置。）在这个过程中，即使数据尚未被消费过也同样会被删除。同时，Kafka也因此会在设置的时间段内保留着所有进入Kafka集群的数据，不论数据是否被消费过。（所以在kafka中的数据可以被重复消费。）（Kafka删除数据的另一种方式是通过每个Partition的大小，partition文件超过设置的大小时就会删除旧数据。）<br>offset与这种数据保留方式的好处有两点：</p>
 <ul>
 <li>保证数据占用的空间不会无限制增长；</li>
@@ -252,7 +257,7 @@
     window.FontAwesomeConfig = {
         searchPseudoElements: true
     }
-    moment.locale("en-AU");
+    moment.locale("default");
 </script>
 
 

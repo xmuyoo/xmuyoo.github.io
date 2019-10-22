@@ -2,7 +2,7 @@
 <html class="has-navbar-fixed-top">
 <head>
     <meta charset="utf-8">
-<title>Kafka Replication - 潇慕雨Muyoo</title>
+<title>Kafka Replication - 潇慕雨 Muyoo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
@@ -21,13 +21,13 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kafka Replication">
 <meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2015&#x2F;10&#x2F;16&#x2F;KafkaReplication&#x2F;index.html">
-<meta property="og:site_name" content="潇慕雨Muyoo">
+<meta property="og:site_name" content="潇慕雨 Muyoo">
 <meta property="og:description" content="上一篇文章简单记录了Kafka的基本工作框架、数据结构、Producer和Consumer。现在继续啃Kafka的官方文档，主要记录下Kafka中的复制集。（Kafka版本 0.8.2.1）">
-<meta property="og:locale" content="en">
-<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;冰滴4.jpg">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;%E5%86%B0%E6%BB%B44.jpg">
 <meta property="og:updated_time" content="2015-10-16T08:23:44.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;冰滴4.jpg">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;%E5%86%B0%E6%BB%B44.jpg">
 
 
 
@@ -94,13 +94,16 @@
                href="/categories">Technology</a>
             
             <a class="navbar-item "
+               href="/tags">Tags</a>
+            
+            <a class="navbar-item "
                href="/about">About</a>
             
         </div>
         
         <div class="navbar-menu navbar-end">
             
-            <a class="navbar-item search" title="Search" href="javascript:;" target="_blank" rel="noopener">
+            <a class="navbar-item search" title="Search" href="javascript:;">
                 <i class="fas fa-search"></i>
             </a>
             
@@ -145,8 +148,10 @@
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
-        <p><img src="http://7vzs9m.com1.z0.glb.clouddn.com/冰滴4.jpg" alt=" 还是比较喜欢水果风味较亮的咖啡，中培的曼特宁喝起来竟会联想到原始森林T.T - By Muyoo"></p>
-<p>上一篇文章简单记录了Kafka的基本工作框架、数据结构、Producer和Consumer。现在继续啃Kafka的官方文档，主要记录下Kafka中的复制集。<br>（Kafka版本 0.8.2.1）<br><a id="more"></a></p>
+        <p><img src="http://7vzs9m.com1.z0.glb.clouddn.com/%E5%86%B0%E6%BB%B44.jpg" alt=" 还是比较喜欢水果风味较亮的咖啡，中培的曼特宁喝起来竟会联想到原始森林T.T - By Muyoo"></p>
+<p>上一篇文章简单记录了Kafka的基本工作框架、数据结构、Producer和Consumer。现在继续啃Kafka的官方文档，主要记录下Kafka中的复制集。<br>（Kafka版本 0.8.2.1）</p>
+<a id="more"></a>
+
 <h3 id="Replication的结构"><a href="#Replication的结构" class="headerlink" title="Replication的结构"></a>Replication的结构</h3><p>Kafka中通过配置项来指定topic中partition的replication数量。（通常replication面临的问题：通常slave节点的使用率不高，数据间的传输备份会与提升吞吐量造成冲突；同时需要配置的项目也是比较繁琐。）<br>Kafka备份的数据单元是partition，每个partition有一个leader和若干follower。replica的总数取决于所有broker的数量（包括leader）。broker作为工作单元（服务器），一个partition可以有多个broker，反之一个broker下也有多个partition（partition可能是不同topic的）。通常情况下，partition的数量比broker多，而leader也是在这些broker中选出。</p>
 <h3 id="同步数据"><a href="#同步数据" class="headerlink" title="同步数据"></a>同步数据</h3><p>follower同步从leader同步数据的方式与正常的Consumer相同，从leader读取数据然后存入自己的log队列。一条新的数据进入后，在所有“in sync”的replica成功将其放入自己的队列后，这条数据才能被正常的Consumer读取。这个过程在Kafka中被称为“committed”。<br>而“in sync”是指，leader会维护一个满足以下两个条件的replica节点集合：</p>
 <ul>
@@ -239,7 +244,7 @@
     window.FontAwesomeConfig = {
         searchPseudoElements: true
     }
-    moment.locale("en-AU");
+    moment.locale("default");
 </script>
 
 

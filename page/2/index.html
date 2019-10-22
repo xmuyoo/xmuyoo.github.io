@@ -2,7 +2,7 @@
 <html class="has-navbar-fixed-top">
 <head>
     <meta charset="utf-8">
-<title>Spark学习笔记记录点 - 潇慕雨 Muyoo</title>
+<title>潇慕雨 Muyoo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
@@ -16,18 +16,14 @@
 
 
 
-    <meta name="description" content="Overview 有两种对象： RDD（Resillient Distributed Dataset），弹性分布式数据集，可以存储任何形式的数据； 共享变量（Shared Variables），可以在不同的集群任务中共享，提供两种共享变量：  boardcast variable：在不同任务之间共享的变量，只读 accumulators：在不同任务之间共享的计数器，可用于求和">
-<meta name="keywords" content="Spark,Distributed System">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Spark学习笔记记录点">
-<meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2015&#x2F;09&#x2F;08&#x2F;SparkLearningNote&#x2F;index.html">
+    <meta name="description" content="Keep thinking, keep learning, keep working">
+<meta property="og:type" content="website">
+<meta property="og:title" content="潇慕雨 Muyoo">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;page&#x2F;2&#x2F;index.html">
 <meta property="og:site_name" content="潇慕雨 Muyoo">
-<meta property="og:description" content="Overview 有两种对象： RDD（Resillient Distributed Dataset），弹性分布式数据集，可以存储任何形式的数据； 共享变量（Shared Variables），可以在不同的集群任务中共享，提供两种共享变量：  boardcast variable：在不同任务之间共享的变量，只读 accumulators：在不同任务之间共享的计数器，可用于求和">
+<meta property="og:description" content="Keep thinking, keep learning, keep working">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;%E7%BB%83%E4%B9%A05.jpg">
-<meta property="og:updated_time" content="2015-09-08T06:18:50.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;%E7%BB%83%E4%B9%A05.jpg">
 
 
 
@@ -122,10 +118,11 @@
 
     <section class="section">
     <div class="container">
-    <article class="article content gallery" itemscope itemprop="blogPost">
+    
+        <article class="article content gallery" itemscope itemprop="blogPost">
     <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
         
-            Spark学习笔记记录点
+            <a href="/2015/09/08/SparkLearningNote/" itemprop="url">Spark学习笔记记录点</a>
         
     </h1>
     <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
@@ -155,91 +152,38 @@
 <p>共享变量（Shared Variables），可以在不同的集群任务中共享，提供两种共享变量：</p>
 <ul>
 <li>boardcast variable：在不同任务之间共享的变量，只读</li>
-<li>accumulators：在不同任务之间共享的计数器，可用于求和<a id="more"></a>
-
-</li>
-</ul>
-</li>
-</ol>
-<h3 id="连接Spark集群"><a href="#连接Spark集群" class="headerlink" title="连接Spark集群"></a>连接Spark集群</h3><ol>
-<li><p>Java</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SparkConf conf = <span class="hljs-keyword">new</span> SparkConf().setAppName(appName).setMaster(master);</span><br><span class="line">JavaSparkContext sc = <span class="hljs-keyword">new</span> JavaSparkContext(conf);</span><br></pre></td></tr></table></figure></p>
-<p>第一行是创建Spark的集群信息对象，第二行是连接集群；任何一个Spark的应用都通过一个Context对象来连接集群：</p>
-<blockquote>
-<p>The first thing a Spark program must do is to create a JavaSparkContext object, which tells Spark how to access a cluster. To create a SparkContext you first need to build a SparkConf object that contains information about your application.</p>
-</blockquote>
-</li>
-</ol>
-<h3 id="RDD-Resillient-Distributed-Dataset"><a href="#RDD-Resillient-Distributed-Dataset" class="headerlink" title="RDD(Resillient Distributed Dataset)"></a>RDD(Resillient Distributed Dataset)</h3><p>RDD是一个可容错、可并行处理的数据集合。</p>
-<ol>
-<li><p>创建RDD：</p>
-<p>有两种方式来创建RDD：创建并行处理集合 和 使用外部数据。</p>
-<p>并行数据集合（Parallelized Collections）：由我们自己的程序driver program生成，Java中通过JavaSparkContext对象的parallelize方法指定：</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; data = Arrays.asList(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>);</span><br><span class="line">JavaRDD&lt;Integer&gt; distData = sc.parallelize(data);</span><br></pre></td></tr></table></figure><br>parallelize方法可以传入分区参数，告诉Spark将输入数据分成多少个分区。</p>
-<p>外部数据集（External Datasets）：任务Hadoop格式的数据，如HDFS、HBase，甚至可以是AWS S3。通过SparkContext对象的textFile方法指定：</p>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JavaRDD&lt;String&gt; distFile = sc.textFile(<span class="hljs-string">"data.txt"</span>);</span><br></pre></td></tr></table></figure><br>外部数据集可以是一般的TextFiles、SequenceFile，或是Hadoop支持的其它任何格式的数据。外部数据集的输入可以直接指定目录、包含通配符的文件名，也支持直接指定gz文件。</p>
-<p>外部数据集同样支持指定分区，默认是一个Hadoop的block对应一个分区。</p>
-<ul>
-<li>详细外部数据集说明信息参见（主要是note部分）：<a href="http://spark.apache.org/docs/latest/programming-guide.html#external-datasets" target="_blank" rel="noopener">External Datasets</a>*</li>
-</ul>
-</li>
-<li><p>RDD操作：transformations 和 actions</p>
-<ul>
-<li>transformations: 从一个已有数据集创建出一个新的数据集（理解为原数据集的变换）</li>
-</ul>
-<blockquote>
-<p>create a new dataset from an existing one</p>
-</blockquote>
-<p>transformations的操作在创建时并不会马上执行，只有在调用actions的方法时才会开始执行。</p>
-<ul>
-<li>actions: 对数据集做处理，例如统计计数等，返回一个值</li>
-</ul>
-<blockquote>
-<p>return a value to the driver program after running a computation on the dataset</p>
-</blockquote>
-<ul>
-<li>每个经过transform的RDD都可以重复使用：通过 persist 方法。</li>
-<li>官方代码示例：</li>
-</ul>
-<p><figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">JavaRDD&lt;String&gt; lines = sc.textFile(<span class="hljs-string">"data.txt"</span>); <span class="hljs-comment">//use an external dataset</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// laziness, it will bot be computed here</span></span><br><span class="line">JavaRDD&lt;Integer&gt; lineLengths = lines.map(s -&gt; s.length());</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// cache the transformed lineLengths RDD, declear before use reduce method</span></span><br><span class="line">lineLengths.persist();</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">// actions</span></span><br><span class="line"><span class="hljs-keyword">int</span> totalLength = lineLengths.reduce((a, b) -&gt; a + b);</span><br></pre></td></tr></table></figure></p>
-<ul>
-<li>transformation 的方法：<a href="http://spark.apache.org/docs/latest/programming-guide.html#transformations" target="_blank" rel="noopener">Functions of Transformations</a></li>
-<li>actions 的方法：<a href="http://spark.apache.org/docs/latest/programming-guide.html#actions" target="_blank" rel="noopener">Functions of Actions</a></li>
-<li>shuffle operations<br>shuffle operations是一种很消耗资源的操作，官方并不推荐使用这种方式；</li>
-</ul>
-</li>
-<li><p>Java代码使用方式参考：<a href="http://spark.apache.org/docs/latest/programming-guide.html#passing-functions-to-spark" target="_blank" rel="noopener">Passing Functions to Spark</a></p>
-</li>
-</ol>
-
+<li>accumulators：在不同任务之间共享的计数器，可用于求和</li></ul></li></ol>
+        <p class="article-more-link">
+            <a href="/2015/09/08/SparkLearningNote/#more">Read More</a>
+        </p>
     
     </div>
     
-    <div class="columns is-variable is-1 is-multiline is-mobile">
-    
-        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Spark/">#Spark</a></span>
-    
-        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Distributed-System/">#Distributed System</a></span>
-    
-    </div>
-    
-    
-    <div class="columns is-mobile is-multiline article-nav">
-        <span class="column is-12-mobile is-half-desktop  article-nav-prev">
-            
-            <a href="/2015/10/12/StreamLearning/">Stream Processing学习笔记</a>
-            
-        </span>
-        <span class="column is-12-mobile is-half-desktop is-hidden-mobile article-nav-next">
-            
-        </span>
-    </div>
     
 </article>
 
 
 
 
+    
+    
+        
+<nav class="pagination is-centered is-rounded" role="navigation" aria-label="pagination">
+    <div class="pagination-previous">
+        <a href="/">Prev</a>
+    </div>
+    <div class="pagination-next is-invisible is-hidden-mobile">
+        <a href="/page/3/">Next</a>
+    </div>
+    <ul class="pagination-list is-hidden-mobile">
+        
+        <li><a class="pagination-link" href="/">1</a></li>
+        
+        <li><a class="pagination-link is-current" href="/page/2/">2</a></li>
+        
+    </ul>
+</nav>
+    
     </div>
 </section>
     <footer class="footer">
