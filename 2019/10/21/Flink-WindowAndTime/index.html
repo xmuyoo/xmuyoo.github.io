@@ -24,10 +24,10 @@
 <meta property="og:site_name" content="潇慕雨 Muyoo">
 <meta property="og:description" content="流计算中的 Window首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。 数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。 Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，目">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2019&#x2F;10&#x2F;21&#x2F;Flink-WindowAndTime&#x2F;images&#x2F;window-mechanics.webp">
+<meta property="og:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;images&#x2F;window-mechanics.webp">
 <meta property="og:updated_time" content="2019-10-21T03:28:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2019&#x2F;10&#x2F;21&#x2F;Flink-WindowAndTime&#x2F;images&#x2F;window-mechanics.webp">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;images&#x2F;window-mechanics.webp">
 
 
 
@@ -172,7 +172,7 @@
 </blockquote>
 <p><strong>Count Sliding Window</strong> 同样这种窗口的边界会随时间变化而推移。与 Count Tumbling Window 类似的是，我们通常只声明窗口的长度；而与之不同的是，它的推移方式是以窗口的单位长度进行推移，而不是窗口的整体长度，比如“最近 100 个元素”，“最近 50 个元素”等。多个窗口之间的元素集合可能是有交集的。</p>
 <h3 id="数据在-Window-中是怎么流转的"><a href="#数据在-Window-中是怎么流转的" class="headerlink" title="数据在 Window 中是怎么流转的"></a>数据在 Window 中是怎么流转的</h3><p>在这借助 Flink 官方的示意图：</p>
-<p><img src="images/window-mechanics.webp" alt="Window Mechianics"></p>
+<p><img src="/images/window-mechanics.webp" alt="Window Mechianics"></p>
 <p>从一个数据元素进入流开始，WindowAssigner 为这个数据元素分配一个 Window；接着，Trigger 检查这个 Window 的输出条件是否被满足。如果条件达到了，并且也有一个 Evictor，那么 Trigger 将此时 Window 中所有的数据元素交给 Evictor；如果没有 Evictor，那么 Trigger 就直接将这些数据元素交给 EventFunction。Evictor 在收到数据元素后过滤掉不需要的数据元素，然后再将数据交给 EventFunction。EventFunction 收到数据后，就开始对数据元素做计算的工作（例如求和、计数），最后将结果输出。</p>
 <p><strong>Trigger</strong> 的功能是检测是否满足输出窗口内数据的条件，然后将数据输出；并决定是否继续保留这个窗口。为 Trigger 声明的检测条件是自定义的。</p>
 <blockquote>
