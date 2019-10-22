@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+<head>
+    <meta charset="utf-8">
+<title>Stream Processing学习笔记 - 潇慕雨Muyoo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
+
+
+
+
+<meta name="description" content="Keep thinking, keep learning, keep working">
+
+
+
+
+
+    <meta name="description" content="最近在学习实时流式数据处理的相关知识。这篇文章就作为学习笔记来整理、记录，所谓“好记性不如烂笔头”。 学习的资料不是某本书，也不是某某教程，对于这样概念性和实践性都比较强、同时又主要是依赖于一些组件工具的东西，只需要在网络上搜索相关的技术文档就好了。因此，我学习的材料是Samza的官方文档。Samza是一个很年轻的组件，依赖Kafka。我并非要使用它，而是它的官方文档不仅写了使用Samza的相关">
+<meta name="keywords" content="StreamProcessing">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stream Processing学习笔记">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2015&#x2F;10&#x2F;12&#x2F;StreamLearning&#x2F;index.html">
+<meta property="og:site_name" content="潇慕雨Muyoo">
+<meta property="og:description" content="最近在学习实时流式数据处理的相关知识。这篇文章就作为学习笔记来整理、记录，所谓“好记性不如烂笔头”。 学习的资料不是某本书，也不是某某教程，对于这样概念性和实践性都比较强、同时又主要是依赖于一些组件工具的东西，只需要在网络上搜索相关的技术文档就好了。因此，我学习的材料是Samza的官方文档。Samza是一个很年轻的组件，依赖Kafka。我并非要使用它，而是它的官方文档不仅写了使用Samza的相关">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;藏地旅行205.jpg">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;stream-partition.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;steam-task.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;dataflow-graph.png">
+<meta property="og:updated_time" content="2015-10-12T02:57:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;藏地旅行205.jpg">
+
+
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ovo|Source+Code+Pro">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/css/justifiedGallery.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css">
+
+<link rel="stylesheet" href="/css/style.css">
+
+<script defer src="//use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+
+</head>
+<body>
+    
+<nav class="navbar is-transparent is-fixed-top navbar-main" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item navbar-logo" href="/">
+                
+                    
+                    潇慕雨 Muyoo
+                    
+                
+            </a>
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="navbar-menu navbar-start">
+            
+            <a class="navbar-item "
+               href="/archives">Archives</a>
+            
+            <a class="navbar-item "
+               href="/categories">Technology</a>
+            
+            <a class="navbar-item "
+               href="/about">About</a>
+            
+        </div>
+        
+        <div class="navbar-menu navbar-end">
+            
+            <a class="navbar-item search" title="Search" href="javascript:;" target="_blank" rel="noopener">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            
+            
+            <a class="navbar-item" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+               
+            
+        </div>
+    </div>
+</nav>
+
+    <section class="section">
+    <div class="container">
+    <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            Stream Processing学习笔记
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            <time datetime="2015-10-12T02:57:50.000Z" itemprop="datePublished">Oct 12 2015</time>
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><span>></span><a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/Kafka/">Kafka</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            7 minutes read (About 1022 words)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <p><img src="http://7vzs9m.com1.z0.glb.clouddn.com/藏地旅行205.jpg" alt=" 最喜在幽然清风下静心学习，青稞真的跟麦子很像 - By Muyoo"></p>
+<p>最近在学习实时流式数据处理的相关知识。这篇文章就作为学习笔记来整理、记录，所谓“好记性不如烂笔头”。</p>
+<p>学习的资料不是某本书，也不是某某教程，对于这样概念性和实践性都比较强、同时又主要是依赖于一些组件工具的东西，只需要在网络上搜索相关的技术文档就好了。因此，我学习的材料是Samza的官方文档。Samza是一个很年轻的组件，依赖Kafka。我并非要使用它，而是它的官方文档不仅写了使用Samza的相关信息，还写了关于Stream Processing的概念。<br><a id="more"></a></p>
+<h3 id="Stream-Processing概念"><a href="#Stream-Processing概念" class="headerlink" title="Stream Processing概念"></a>Stream Processing概念</h3><p>Stream Processing依赖于消息系统（Messaging System）。先简单说下什么是messaging system：</p>
+<blockquote>
+<p>A messaging system is a fairly low-level piece of infrastructure—it stores messages and waits for consumers to consume them. – Samza</p>
+</blockquote>
+<p>消息系统即是一个将消息数据缓存在消息队列中，等待消息处理程序去取数据的系统。</p>
+<p>而Stream Processing是建立在消息系统之上的一个数据处理概念：</p>
+<blockquote>
+<p>Stream processing is a higher level of abstraction on top of messaging systems, and it’s meant to address precisely this category of problems. – Samza</p>
+</blockquote>
+<p>Stream Processing建立在消息系统之上，可能一个消息系统也可能多个；同时，在Stream Processing过程中包括如何处理消息系统中若干问题。</p>
+<h3 id="Stream-Processing的常见问题"><a href="#Stream-Processing的常见问题" class="headerlink" title="Stream Processing的常见问题"></a>Stream Processing的常见问题</h3><p>由于Stream Processing是建立在消息系统这样的基础设施之上的，所以消息系统本身的问题同时也是Stream Processing的问题。</p>
+<ol>
+<li>如果数据的消费程序挂掉、当前数据丢掉了，怎么处理？丢掉的数据如何恢复？</li>
+<li>重启的程序应该从什么位置继续工作？</li>
+<li>如果依赖的消息系统出现数据重发、数据漏发，怎么处理？</li>
+<li>如何对消息数据进行分组处理？</li>
+<li>消息数据处理进程的状态如何维护？</li>
+</ol>
+<h3 id="Samza"><a href="#Samza" class="headerlink" title="Samza"></a>Samza</h3><h4 id="Samza的Job、partition和task"><a href="#Samza的Job、partition和task" class="headerlink" title="Samza的Job、partition和task"></a>Samza的Job、partition和task</h4><p>下面的笔记关于Samza的工作模式，其中的方式可以借鉴到一般的Stream Processing中。<br>Samza的一个job按数据管理方式会被分成若干个partition，按工作进程会被分成若干个task。</p>
+<p>数据以Kafka 的方式按Key被分到不同的partition中，相同key的数据一定会被分到同一个partition中。<br><img src="http://7vzs9m.com1.z0.glb.clouddn.com/stream-partition.png" alt="from http://samza.apache.org"></p>
+<p>Task是job中具体执行数据处理的工作单元，一个task不局限于某一个job，它可以接收多个输入流，也就是说一个task可以从多个partition上读取数据；但反过来，一个partition的数据只能由一个task读取（从某一个task角度看，是1对N的关系；从某一个partition角度看，是1对1的关系。），因此partition的数量不能超过task的数量（有可能会出现task没有对应partition的情况）。多个task可以运行在多台机器上，其中资源的调度是通过yarn分配的。<br><img src="http://7vzs9m.com1.z0.glb.clouddn.com/steam-task.png" alt="from http://samza.apache.org"></p>
+<p>在Samza中的数据流与job之间可以形成一个数据流图（Dataflow Graphs），如图：<br><img src="http://7vzs9m.com1.z0.glb.clouddn.com/dataflow-graph.png" alt="from http://samza.apache.org"><br>这样的好处是不同的job不必都写在同一份代码中；同时在这种方式下，对下游job进行操作时不影响上游job。</p>
+<blockquote>
+<p>The jobs are otherwise totally decoupled: they need not be implemented in the same code base, and adding, removing, or restarting a downstream job will not impact an upstream job. – Samza</p>
+</blockquote>
+
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/StreamProcessing/">#StreamProcessing</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop  article-nav-prev">
+            
+            <a href="/2015/10/14/KafkaNote/">Kafka 基本概念</a>
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop  article-nav-next">
+            
+            <a href="/2015/09/08/SparkLearningNote/">Spark学习笔记记录点</a>
+            
+        </span>
+    </div>
+    
+</article>
+
+
+
+
+    </div>
+</section>
+    <footer class="footer">
+    <div class="container">
+        <div class="columns content">
+            <div class="column is-narrow has-text-centered">
+                &copy; 2019 Muyoo&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+            </div>
+            <div class="column is-hidden-mobile"></div>
+
+            
+            <div class="column is-narrow">
+                <div class="columns is-mobile is-multiline is-centered">
+                
+                    
+                <a class="column is-narrow has-text-black" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                    
+                    GitHub
+                    
+                </a>
+                
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</footer>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+
+<!-- test if the browser is outdated -->
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/" target="_blank" rel="noopener">Update my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // plugin function, place inside DOM ready function
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        })
+    });
+</script>
+
+<script>
+    window.FontAwesomeConfig = {
+        searchPseudoElements: true
+    }
+    moment.locale("en-AU");
+</script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+</script>
+
+    
+    
+    
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/js/lightgallery-all.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/js/jquery.justifiedGallery.min.js"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            if (typeof($.fn.lightGallery) === 'function') {
+                $('.article.gallery').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof($.fn.justifiedGallery) === 'function') {
+                $('.justified-gallery').justifiedGallery();
+            }
+        });
+    })(jQuery);
+</script>
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <style>
+        .hljs {
+            position: relative;
+        }
+
+        .hljs .clipboard-btn {
+            float: right;
+            color: #9a9a9a;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .hljs .clipboard-btn:hover {
+          color: #8a8a8a;
+        }
+
+        .hljs > .clipboard-btn {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 4px;
+        }
+
+        .hljs:hover > .clipboard-btn {
+            display: inline;
+        }
+
+        .hljs > figcaption > .clipboard-btn {
+            margin-right: 4px;
+        }
+    </style>
+    <script>
+      $(document).ready(function () {
+        $('figure.hljs').each(function(i, figure) {
+          var codeId = 'code-' + i;
+          var code = figure.querySelector('.code');
+          var copyButton = $('<button>Copy <i class="far fa-clipboard"></i></button>');
+          code.id = codeId;
+          copyButton.addClass('clipboard-btn');
+          copyButton.attr('data-clipboard-target-id', codeId);
+
+          var figcaption = figure.querySelector('figcaption');
+
+          if (figcaption) {
+            figcaption.append(copyButton[0]);
+          } else {
+            figure.prepend(copyButton[0]);
+          }
+        })
+
+        var clipboard = new ClipboardJS('.clipboard-btn', {
+          target: function(trigger) {
+            return document.getElementById(trigger.getAttribute('data-clipboard-target-id'));
+          }
+        });
+        clipboard.on('success', function(e) {
+          e.clearSelection();
+        })
+      })
+    </script>
+
+    
+    
+
+    
+
+
+<script src="/js/script.js"></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-mask"></div>
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+</body>
+</html>

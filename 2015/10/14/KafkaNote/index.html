@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+<head>
+    <meta charset="utf-8">
+<title>Kafka 基本概念 - 潇慕雨Muyoo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
+
+
+
+
+<meta name="description" content="Keep thinking, keep learning, keep working">
+
+
+
+
+
+    <meta name="description" content="（Kafka版本 0.8.2.1） Kafka框架下的基本工作模式Kafka是一个消息处理系统。从大面上看，产生消息数据的生产者（Producer）将数据推送到Kafka集群，Kafka集群将消息数据保留起来；然后消费消息数据的消费者（Consumer）向Kafka集群发起请求来消费数据。如图：">
+<meta name="keywords" content="Kafka,Messaging System">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka 基本概念">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2015&#x2F;10&#x2F;14&#x2F;KafkaNote&#x2F;index.html">
+<meta property="og:site_name" content="潇慕雨Muyoo">
+<meta property="og:description" content="（Kafka版本 0.8.2.1） Kafka框架下的基本工作模式Kafka是一个消息处理系统。从大面上看，产生消息数据的生产者（Producer）将数据推送到Kafka集群，Kafka集群将消息数据保留起来；然后消费消息数据的消费者（Consumer）向Kafka集群发起请求来消费数据。如图：">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;藏地旅行125.jpg">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;kafka-producer_consumer.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;kafka-log_anatomy.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;kafka-consumer-groups.png">
+<meta property="og:updated_time" content="2015-10-14T04:00:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;藏地旅行125.jpg">
+
+
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ovo|Source+Code+Pro">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/css/justifiedGallery.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css">
+
+<link rel="stylesheet" href="/css/style.css">
+
+<script defer src="//use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+
+</head>
+<body>
+    
+<nav class="navbar is-transparent is-fixed-top navbar-main" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item navbar-logo" href="/">
+                
+                    
+                    潇慕雨 Muyoo
+                    
+                
+            </a>
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="navbar-menu navbar-start">
+            
+            <a class="navbar-item "
+               href="/archives">Archives</a>
+            
+            <a class="navbar-item "
+               href="/categories">Technology</a>
+            
+            <a class="navbar-item "
+               href="/about">About</a>
+            
+        </div>
+        
+        <div class="navbar-menu navbar-end">
+            
+            <a class="navbar-item search" title="Search" href="javascript:;" target="_blank" rel="noopener">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            
+            
+            <a class="navbar-item" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+               
+            
+        </div>
+    </div>
+</nav>
+
+    <section class="section">
+    <div class="container">
+    <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            Kafka 基本概念
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            <time datetime="2015-10-14T04:00:46.000Z" itemprop="datePublished">Oct 14 2015</time>
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><span>></span><a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/Kafka/">Kafka</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            14 minutes read (About 2035 words)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <p><img src="http://7vzs9m.com1.z0.glb.clouddn.com/藏地旅行125.jpg" alt=" 每次旅行都能让我回味到下次旅行时，罗布林卡的花真漂亮 - By Muyoo"><br>（Kafka版本 0.8.2.1）</p>
+<h3 id="Kafka框架下的基本工作模式"><a href="#Kafka框架下的基本工作模式" class="headerlink" title="Kafka框架下的基本工作模式"></a>Kafka框架下的基本工作模式</h3><p>Kafka是一个消息处理系统。从大面上看，产生消息数据的生产者（Producer）将数据推送到Kafka集群，Kafka集群将消息数据保留起来；然后消费消息数据的消费者（Consumer）向Kafka集群发起请求来消费数据。如图：<br><img src="http://7vzs9m.com1.z0.glb.clouddn.com/kafka-producer_consumer.png" alt="from Apache Kafka"><br><a id="more"></a></p>
+<h3 id="Kafka基本数据结构"><a href="#Kafka基本数据结构" class="headerlink" title="Kafka基本数据结构"></a>Kafka基本数据结构</h3><p>消息数据在Kafka中先按照指定的名称进入一组消息队列，这组消息队列有统一的名称。在Kafka中，这样的消息队列组称为Topic。在每个Topic中有多个消息队列partition。每条消息进入Kafka后，按照key被分配到某个partition中，添加到队列的末尾。如下图：<br><img src="http://7vzs9m.com1.z0.glb.clouddn.com/kafka-log_anatomy.png" alt="from Apache Kafka"><br>对每个partition中的每条数据，kafka会维护一个它在队列中的偏移量（可以理解为类似数组下标的东西）；consumer通过偏移量来读取指定的数据。<br>对于进入Kafka的数据，Kafka会保留一段时间；过了这段时间后，Kafka就会删除最早的一条数据，也就是从队列头的数据。（保留的时间长短可以通过配置文件设置。）在这个过程中，即使数据尚未被消费过也同样会被删除。同时，Kafka也因此会在设置的时间段内保留着所有进入Kafka集群的数据，不论数据是否被消费过。（所以在kafka中的数据可以被重复消费。）（Kafka删除数据的另一种方式是通过每个Partition的大小，partition文件超过设置的大小时就会删除旧数据。）<br>offset与这种数据保留方式的好处有两点：</p>
+<ul>
+<li>保证数据占用的空间不会无限制增长；</li>
+<li>consumer在消费数据时，互相之间是独立的，不会产生影响。</li>
+</ul>
+<h3 id="Kafka的分布式结构"><a href="#Kafka的分布式结构" class="headerlink" title="Kafka的分布式结构"></a>Kafka的分布式结构</h3><p>Kafka的分布式结构体现在物理存储partition上。在物理存储方式上，一个partition被分成了若干份，分别存储在不同的机器上。每个partition的数据也会被复制若干份（数量可配置）。<br>每个partition会有一个“leader”的角色，负责处理所有读写请求；同时也有多个“follower”，当leader挂掉时，其中一个follower会承担起leader的角色，变成新的leader。</p>
+<h3 id="Producer"><a href="#Producer" class="headerlink" title="Producer"></a>Producer</h3><p>Producer负责产生数据发送到Kafka中。Producer发送数据有两种方式，第一种是随机发送数据到集群中；第二种是以key来指明数据所属的topic与partition。推荐使用第二种方式，因为通过指定key可以将同一类数据发送到同一partition，后端的consumer就可以只针对这个partition来处理数据。<br>Producer采取异步发送数据方式。Producer发送数据时是批量发送，发送的周期可以以积累的数据大小和时间周期两个条件来同时配置。<br>Kafka中的数据可以进行压缩，有gzip和snapy两种格式。关于压缩参考：<a href="https://cwiki.apache.org/confluence/display/KAFKA/Compression" target="_blank" rel="noopener">Kafka数据压缩</a>。关于Producer发送数据的相关配置和API可参考：<a href="http://kafka.apache.org/documentation.html#newproducerconfigs" target="_blank" rel="noopener">配置项</a> 和 <a href="http://kafka.apache.org/082/javadoc/index.html?org/apache/kafka/clients/producer/KafkaProducer.html" target="_blank" rel="noopener">API</a></p>
+<p>在Producer端，对于数据保证没有做很多工作。Producer可以设置等待响应的时间，也可以设置就一直等到有响应为止。官方对这点的说法是对于数据生产者来说，它只需要做到在数据发送失败时能重发就可以了，对数据的保证（guarantee）的要求并非很强；并且也在考虑将来加入相关的机制。<br>Kafka中Producer的默认发送方式是“at-least-once”（可配置）。</p>
+<h3 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h3><p>Consumer负责从partition中消费数据。每个Consumer被组合成一个Consumer Group。Consumer Group中的每个Consumer可以消费不同partition的数据，但反过来partition只能被一个consumer消费，也因此实际消费的consumer数量不可以超过partition的数量。如下图：<br><img src="http://7vzs9m.com1.z0.glb.clouddn.com/kafka-consumer-groups.png" alt="from Apache Kafka"><br>这种模式可以同时兼顾到消息处理模拟模型中的queue和publish-subscribe两种方式。另外，在传统的消息处理系统中，由于发送数据与消费数据是异步进行的，所以当消息系统将消息发送出去后，就不能保证数据在consumer一端仍然有序（理解是因为传统的系统中，后端有多个consumer去消费queue中的数据）。而Kafka中从partition到consumer是1对1的关系，所以能保证数据原有的顺序。<br>但是，这种顺序仅在partition中被保证，而无法保证数据在topic层面是有序的。</p>
+<p>Consumer读取数据时需要向作为某个partition的leader的broker发送读取该partition数据请求，请求中指明数据的offset和读取的批量大小。<br>因为Consumer本质上是通过指定offset去读取数据的，那么再向Kafka做ack/commit offset是否还有必要？只需要Consumer自己记录下offset就可以进行读取？<br>答案是是的。但这仅限于Consumer永远不会挂掉的情况。否则就需要考虑怎么记录下Consumer的处理位置。</p>
+<p>Consumer在请求数据时，采取长连接等待的方式，也就是直到有数据进入时才读取数据；也可以选择设置数据的大小，consumer就会等进入的数据达到设置的大小时才取回数据（这种方式可以确保一次性传输较大的数据，减少网络传输次数等）。<br>从consumer的角度看数据保证（guarantee）的问题。在consumer看来，因为它需要维护读取数据的位置，所以相比Producer而言会复杂一些。官方也对比了三种方式：</p>
+<ul>
+<li>读数据 -&gt; 存储位置 -&gt; 处理数据：这种方式下，当在“处理数据”阶段挂掉时，由于已经保存了位置状态，当下次请求数据时就会从下一条数据开始。这样的话，数据就会丢失。这符合“at-most-once”的情况。</li>
+<li>读数据 -&gt; 处理数据 -&gt; 存储位置：这种方式下，当consumer在“处理数据”后、“存储位置”前（或“存储位置”的过程中）挂掉时，数据的位置状态没有被记录下来；在下一次的过程中，这条数据就会重复处理一次。这符合“at-least-once”的情况。</li>
+<li>读数据 -&gt; 输出数据：这种处理方法与上述两种方法的角度、思路不同。这种方法是将offset存储和输出的数据存储在一起；上述两种方法是基于messaing system中关于数据发送来讨论（“at-most-once”，“at-least-once”，“exactly-once”）。官方的例子是，在他们的Hadoop ETL过程中，将offset和输出数据一起存在HDFS中，这样offset和数据要么一起更新，要么都不更新。</li>
+</ul>
+
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Kafka/">#Kafka</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Messaging-System/">#Messaging System</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop  article-nav-prev">
+            
+            <a href="/2015/10/16/KafkaReplication/">Kafka Replication</a>
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop  article-nav-next">
+            
+            <a href="/2015/10/12/StreamLearning/">Stream Processing学习笔记</a>
+            
+        </span>
+    </div>
+    
+</article>
+
+
+
+
+    </div>
+</section>
+    <footer class="footer">
+    <div class="container">
+        <div class="columns content">
+            <div class="column is-narrow has-text-centered">
+                &copy; 2019 Muyoo&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+            </div>
+            <div class="column is-hidden-mobile"></div>
+
+            
+            <div class="column is-narrow">
+                <div class="columns is-mobile is-multiline is-centered">
+                
+                    
+                <a class="column is-narrow has-text-black" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                    
+                    GitHub
+                    
+                </a>
+                
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</footer>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+
+<!-- test if the browser is outdated -->
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/" target="_blank" rel="noopener">Update my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // plugin function, place inside DOM ready function
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        })
+    });
+</script>
+
+<script>
+    window.FontAwesomeConfig = {
+        searchPseudoElements: true
+    }
+    moment.locale("en-AU");
+</script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+</script>
+
+    
+    
+    
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/js/lightgallery-all.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/js/jquery.justifiedGallery.min.js"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            if (typeof($.fn.lightGallery) === 'function') {
+                $('.article.gallery').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof($.fn.justifiedGallery) === 'function') {
+                $('.justified-gallery').justifiedGallery();
+            }
+        });
+    })(jQuery);
+</script>
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <style>
+        .hljs {
+            position: relative;
+        }
+
+        .hljs .clipboard-btn {
+            float: right;
+            color: #9a9a9a;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .hljs .clipboard-btn:hover {
+          color: #8a8a8a;
+        }
+
+        .hljs > .clipboard-btn {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 4px;
+        }
+
+        .hljs:hover > .clipboard-btn {
+            display: inline;
+        }
+
+        .hljs > figcaption > .clipboard-btn {
+            margin-right: 4px;
+        }
+    </style>
+    <script>
+      $(document).ready(function () {
+        $('figure.hljs').each(function(i, figure) {
+          var codeId = 'code-' + i;
+          var code = figure.querySelector('.code');
+          var copyButton = $('<button>Copy <i class="far fa-clipboard"></i></button>');
+          code.id = codeId;
+          copyButton.addClass('clipboard-btn');
+          copyButton.attr('data-clipboard-target-id', codeId);
+
+          var figcaption = figure.querySelector('figcaption');
+
+          if (figcaption) {
+            figcaption.append(copyButton[0]);
+          } else {
+            figure.prepend(copyButton[0]);
+          }
+        })
+
+        var clipboard = new ClipboardJS('.clipboard-btn', {
+          target: function(trigger) {
+            return document.getElementById(trigger.getAttribute('data-clipboard-target-id'));
+          }
+        });
+        clipboard.on('success', function(e) {
+          e.clearSelection();
+        })
+      })
+    </script>
+
+    
+    
+
+    
+
+
+<script src="/js/script.js"></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-mask"></div>
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+</body>
+</html>

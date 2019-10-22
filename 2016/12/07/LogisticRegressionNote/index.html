@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+<head>
+    <meta charset="utf-8">
+<title>逻辑回归的笔记 - 潇慕雨Muyoo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
+
+
+
+
+<meta name="description" content="Keep thinking, keep learning, keep working">
+
+
+
+
+
+    <meta name="description" content="之前使用逻辑回归时就接触到里面的sigmod函数，就有疑问为什么会想到用这个函数把线性回归的值压缩到0到1之间；而看到的介绍逻辑回归的公开课、文章，大多数都对此没有详细说明。所以现在又把LR拿出来，记录下从别人文章里学到的解释，同时也理一理逻辑回归的过程和现在的一些理解。 有错误、不当之处欢迎指出！ 线性回归在这之前，需要先提一下线性回归。 线性回归比较简单，从二维的空间比较容易从直观上理解：给定">
+<meta name="keywords" content="Logistic Regression,Linear Regression,MLE,逻辑回归,极大似然估计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逻辑回归的笔记">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2016&#x2F;12&#x2F;07&#x2F;LogisticRegressionNote&#x2F;index.html">
+<meta property="og:site_name" content="潇慕雨Muyoo">
+<meta property="og:description" content="之前使用逻辑回归时就接触到里面的sigmod函数，就有疑问为什么会想到用这个函数把线性回归的值压缩到0到1之间；而看到的介绍逻辑回归的公开课、文章，大多数都对此没有详细说明。所以现在又把LR拿出来，记录下从别人文章里学到的解释，同时也理一理逻辑回归的过程和现在的一些理解。 有错误、不当之处欢迎指出！ 线性回归在这之前，需要先提一下线性回归。 线性回归比较简单，从二维的空间比较容易从直观上理解：给定">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;%E5%A4%A7%E7%90%8677.jpg">
+<meta property="og:updated_time" content="2016-12-07T01:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;%E5%A4%A7%E7%90%8677.jpg">
+
+
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ovo|Source+Code+Pro">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/css/justifiedGallery.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css">
+
+<link rel="stylesheet" href="/css/style.css">
+
+<script defer src="//use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+
+</head>
+<body>
+    
+<nav class="navbar is-transparent is-fixed-top navbar-main" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item navbar-logo" href="/">
+                
+                    
+                    潇慕雨 Muyoo
+                    
+                
+            </a>
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="navbar-menu navbar-start">
+            
+            <a class="navbar-item "
+               href="/archives">Archives</a>
+            
+            <a class="navbar-item "
+               href="/categories">Technology</a>
+            
+            <a class="navbar-item "
+               href="/about">About</a>
+            
+        </div>
+        
+        <div class="navbar-menu navbar-end">
+            
+            <a class="navbar-item search" title="Search" href="javascript:;" target="_blank" rel="noopener">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            
+            
+            <a class="navbar-item" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+               
+            
+        </div>
+    </div>
+</nav>
+
+    <section class="section">
+    <div class="container">
+    <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            逻辑回归的笔记
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            <time datetime="2016-12-07T01:00:00.000Z" itemprop="datePublished">Dec 7 2016</time>
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><span>></span><a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/">逻辑回归</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            19 minutes read (About 2778 words)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <p>之前使用逻辑回归时就接触到里面的sigmod函数，就有疑问为什么会想到用这个函数把线性回归的值压缩到0到1之间；而看到的介绍逻辑回归的公开课、文章，大多数都对此没有详细说明。所以现在又把LR拿出来，记录下从别人文章里学到的解释，同时也理一理逻辑回归的过程和现在的一些理解。</p>
+<p>有错误、不当之处欢迎指出！</p>
+<h3 id="线性回归"><a href="#线性回归" class="headerlink" title="线性回归"></a>线性回归</h3><p>在这之前，需要先提一下线性回归。</p>
+<p>线性回归比较简单，从二维的空间比较容易从直观上理解：给定了一组点，然后找到一条线能够拟合这些点。这里所说的“点”就是我们拿到的样本，“线”就是我们要找到的模型（或者说函数）。</p>
+<p>线性回归写出来的样子就是：</p>
+<p>$$h(x) = x_0\theta_0+x_1\theta_1+x_2\theta_2+\ldots+x_n\theta_n$$</p>
+<a id="more"></a>
+<p>用向量的方式表达就是：</p>
+<p>$$ h(x) = \theta^TX $$</p>
+<p>$\theta$是我们的参数，$X$是我们的样本。从上面的公式我们能够看到，线性回归的结果的取值范围是实数范围。</p>
+<p>它用来预测某事件的数值是没问题的，那么它可不可以用来做分类的判断呢，也就是能不能用于回答“是”或“否”的问题呢？</p>
+<p>从概率的角度看，我们如果能够想办法将这个线性回归的值转变成一个概率值，也就是把它弄到$[0,1]$这个范围内，不是就可以了吗？就变成了通过回答“是的概率有多大”来间接回答“是”或“否”的问题。</p>
+<h3 id="利用线性回归的值来回答“是”或“否”"><a href="#利用线性回归的值来回答“是”或“否”" class="headerlink" title="利用线性回归的值来回答“是”或“否”"></a>利用线性回归的值来回答“是”或“否”</h3><p>在这，我们先抛开“怎么把线性回归的值弄到$[0,1]$之间”这个问题。我们先来看一下我们关心的“是否”问题本身。</p>
+<p>还是从概率的角度，我们可以将“是的概率”看作“事件发生的概率”，“回答否的概率”看作“事件不发生的概率”。那么，就可以将“事件发生的概率”设为$P$，而“事件不发生的概率”设为$1-P$。</p>
+<p>实际上，我到现在还有一点不太明白大神们是如何想到要做下面这个操作的（我能想到的就是看起来$P$和$1-P$都是操作同一个数值、而$P$又在$[0,1]$之间，所以直觉上会利用它们的比值）：</p>
+<p>$$ \frac{P}{1-P} $$</p>
+<p>当$P \to 0$时，这个的结果是$\to 0$；当$P \to 1$时，这个的结果是$\to \infty$。所以现在我们再看刚才提到的线性回归的结果范围，我们已经有了一半了：$[0,\infty]$。</p>
+<p>那么剩下的一半呢？我理解，这又是大神们的直觉了，利用了$ln$函数，得到：</p>
+<p>$$\ln(\frac{P}{1-P})$$</p>
+<p>因为$\frac{P}{1-P}$是在$[0,\infty]$的，所以正好是$log$函数标准的定义域，然后就得到了其标准的值域：$[-\infty,\infty]$，也就刚好是我们线性回归的结果范围了。于是，我们就可以得到：</p>
+<p>$$\ln(\frac{P}{1-P})=\theta^TX $$<br>$$\implies \frac{P}{1-P} = e^{\theta^TX}$$<br>$$\implies P = (1-P)e^{\theta^TX}$$<br>$$\implies P = \frac{1}{1+e^{-\theta^TX}} $$</p>
+<p>然后我们令$z(X) = -\theta^TX$，就得到了：<br>$$P = \frac{1}{1+e^z}$$</p>
+<p>这个就是我们常见的sigmod函数了。</p>
+<p>现在我们能够利用线性回归的值来回答“事件发生的概率”这个问题了。</p>
+<p>那么剩下的问题就是我们如何找到$\theta$这个参数呢？</p>
+<h3 id="找寻我们的参数-theta"><a href="#找寻我们的参数-theta" class="headerlink" title="找寻我们的参数$\theta$"></a>找寻我们的参数$\theta$</h3><p>现在，我们有了计算“事件发生概率”的计算式，我们也有了一些样本数据。观察这个计算式，我们就差那个$\theta$了。</p>
+<p>那么，“那个$\theta$是什么”其实直观上一下子能想到这个问题的意思也就是“我们有了一组样本，要怎么计算出那个$\theta$呢？”。这里，我们需要提一下极大似然（MLE）。 </p>
+<blockquote>
+<p>极大似然<br>刚才的问题可以反过来想成是：“什么$\theta$值能够让我最有可能得到现在这些样本？”。用正式些的说法就是，“找到$\theta$使出现现有样本可能性最大”。这就是极大似然估计（MLE）的主要思想。<br>用概率中的条件概率表达式写出来就是：<br>$$P(x^{(1)},x^{(2)},x^{(3)},\ldots,x^{(n)}|\theta)$$<br>我们这里有一个假设：我们的样本是独立同分布的（也就是说任何两个样本之间的出现没有联系、各自独立出现），并且这些样本能够代表总体样本。<br>那么上面这个等式就可以写成：<br>$$P(x^{(1)}|\theta)P(x^{(2)}|\theta)P(x^{(3)}|\theta) \ldots P(x^{(n)}|\theta)$$<br>$$\implies \prod_{i=1}^n P(x^{(i)}|\theta)$$<br>其实是所有样本联合概率分布。</p>
+</blockquote>
+<p>在这里，对于样本$x^{(i)}$，它的概率预测值我们可以写成 $P(x^{(i)})$，我们先不将$\theta$写出来。由于我们的分类问题是二分类，也就是结果等于1或者0。那么表示出来就是$y^{(i)} = 1$ 或 $y^{(i)} = 0$。那么这个概率预测值可以写成：<br>对于样本$x^{(i)}$，有：<br>$$P(y^{(i)} = 1|x^{(i)})^{y^{(i)}}\ast P(y^{(i)} = 0|x^{(i)})^{1-y^{(i)}}$$<br>当$y^{(i)} = 1$时，上式等于$P(y^{(i)} = 1|x^{(i)})$；当 $y^{(i)} = 0$时，上式等于$P(y^{(i)} = 0|x^{(i)})$（我们的$\theta$是在这个$P()$中的，逻辑回归的公式：$P(X)=\frac{1}{1+e^{-\theta^{T}X}}$）。</p>
+<p>结合极大似然的思想，我们就可以得到：<br>$$\prod_{i=1}^nP(y^{(i)}=1|x^{(i)})^{y^{(i)}}\ast P(y^{(i)}=0|x^{(i)})^{1-y^{(i)}}$$</p>
+<p>现在，“极大”就是要求“最大”、求“Max”，也就是求上式的“Max”。这时，我们又可以对其用对数函数来做一步转换。</p>
+<blockquote>
+<p>这里用对数函数做转换的主要原因是，要想求“Max”或是“Min”，得是凸函数（convex）或是凹函数才行。然而上面的式子是非凸的（non-convex），也是非凹的。通过用对数函数转换后的结果是convex的。</p>
+</blockquote>
+<p>转换后的结果是：<br>$$\log(\prod_{i=1}^nP(y^{(i)}=1|x^{(i)})^{y^{(i)}}\ast P(y^{(i)}=0|x^{(i)})^{1-y^{(i)}})$$<br>也就是对这个式子求“Max”。但它是convex的，求“min”要更好一点。就将这个“求Max”的问题转换为求它的对偶问题求“Min”：$min(-\log())$，而$-\log()$通过对数函数的性质就可以得到：<br>$$J(\theta) = \frac{1}{n}\ast \sum_{i=1}^n\underbrace{y^{(i)}\log(h(x^{(i)}))+(1-y^{(i)})\log(1-h(x^{(i)}))}_{h(x^{(i)})=\frac{1}{1+e^{-\theta^{T}X^{(i)}}}}$$</p>
+<p>到这里，可以看到这就是逻辑回归的Cost Function了（在这里还没考虑正则化项）。通过对这个式子求解“Min”，得到“min”时的参数就是我们要找寻的参数了。</p>
+<p>那么从刚才的过程中可以得知，找到那个“Min”值的时候，我们得到的参数就是我们想要的$\theta$。那我们如何找到这个“Min”值？</p>
+<p>在这里，这个问题不深入记录。在新的一篇文章里专门来记录几种找到这个“Min”值，这样安排或许更好一点。这里只提一下常用、常听到的一些：</p>
+<ul>
+<li>批量梯度下降</li>
+<li>随机梯度下降</li>
+<li>拟牛顿法</li>
+</ul>
+<p>另外还有一个很重要的：正则化。</p>
+<h3 id="对逻辑回归的一点感受"><a href="#对逻辑回归的一点感受" class="headerlink" title="对逻辑回归的一点感受"></a>对逻辑回归的一点感受</h3><p>通过把这整个过程理一遍后，对于逻辑回归的一些特点也有了一些理解。这些之前只是听别人、看文章这么说，但其实理解不够。这下感觉自己对这些特点的理解又深了一些。</p>
+<ul>
+<li>在样本数较多时比较好。因为它通过极大似然来推导出cost function，而极大似然的思想中有“现有样本可以代表总体样本”这一点。那么，总体样本当然是很多的，要想代表总体，那自然而然现有样本数是越多越能代表总体了。而且，极大似然是点估计的方法，对参数、模型没有先验在里面，所以样本数越多，知道的信息就越多，就越知道总体样本的“长相”是什么样子。</li>
+<li>用于训练的特征之间最好相互联系较少，也就是参数之间尽量独立。这一点自己感觉有一点取决于用什么方法去找“Min”。比如梯度下降中，是对每个参数$\theta_j$求偏导。那么在对某个$\theta$求偏导时，其它参数是无差别全部参与进来。个人理解这就相当于切断了与其它参数的联系。如果这个$\theta$跟其它参数是紧密联系的，这么一切，联系断掉，就有点呵呵了；那如果是没有联系的，就正好符合这过程。</li>
+<li>好解释。因为它的公式中$Z(X)=\theta^TX$本身是一个线性回归。线性回归的思路就容易弄清楚，然后它哪个参数、哪个特征起的作用大也很容易弄清楚。当然，这也需要在指定特征的时候，尽可能使特征、特征值的含义明确。 </li>
+<li>容易并行化。这跟两个地方有关系，一是逻辑回归预测公式本身，另一个是求“Min”的方法。它本身的公式中$\theta^TX$，是一个向量，可以并行计算的；另外，还是假设用的梯度下降，梯度下降中求解每个$\theta_j$偏导的时候，也是可以并行计算的。</li>
+</ul>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="http://www.hanlongfei.com/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2015/08/05/mle" target="_blank" rel="noopener">机器学习－逻辑回归与最大似然估计</a></li>
+<li><a href="https://www.cnblogs.com/liliu/archive/2010/11/24/1886110.html" target="_blank" rel="noopener">极大似然估计</a></li>
+</ul>
+<p><img src="http://7vzs9m.com1.z0.glb.clouddn.com/%E5%A4%A7%E7%90%8677.jpg" alt="这里少通汽车，每天只有几班车通往外界，却是自我归零的佳地。—— By Muyoo"></p>
+
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Logistic-Regression/">#Logistic Regression</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Linear-Regression/">#Linear Regression</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/MLE/">#MLE</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/">#逻辑回归</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/%E6%9E%81%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1/">#极大似然估计</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop is-hidden-mobile article-nav-prev">
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop  article-nav-next">
+            
+            <a href="/2016/12/04/SomethingAboutThreadSafeInJava/">Java中Synchronized、Volatile、Atomic的一些事</a>
+            
+        </span>
+    </div>
+    
+</article>
+
+
+
+
+    </div>
+</section>
+    <footer class="footer">
+    <div class="container">
+        <div class="columns content">
+            <div class="column is-narrow has-text-centered">
+                &copy; 2019 Muyoo&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+            </div>
+            <div class="column is-hidden-mobile"></div>
+
+            
+            <div class="column is-narrow">
+                <div class="columns is-mobile is-multiline is-centered">
+                
+                    
+                <a class="column is-narrow has-text-black" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                    
+                    GitHub
+                    
+                </a>
+                
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</footer>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+
+<!-- test if the browser is outdated -->
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/" target="_blank" rel="noopener">Update my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // plugin function, place inside DOM ready function
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        })
+    });
+</script>
+
+<script>
+    window.FontAwesomeConfig = {
+        searchPseudoElements: true
+    }
+    moment.locale("en-AU");
+</script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+</script>
+
+    
+    
+    
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/js/lightgallery-all.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/js/jquery.justifiedGallery.min.js"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            if (typeof($.fn.lightGallery) === 'function') {
+                $('.article.gallery').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof($.fn.justifiedGallery) === 'function') {
+                $('.justified-gallery').justifiedGallery();
+            }
+        });
+    })(jQuery);
+</script>
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <style>
+        .hljs {
+            position: relative;
+        }
+
+        .hljs .clipboard-btn {
+            float: right;
+            color: #9a9a9a;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .hljs .clipboard-btn:hover {
+          color: #8a8a8a;
+        }
+
+        .hljs > .clipboard-btn {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 4px;
+        }
+
+        .hljs:hover > .clipboard-btn {
+            display: inline;
+        }
+
+        .hljs > figcaption > .clipboard-btn {
+            margin-right: 4px;
+        }
+    </style>
+    <script>
+      $(document).ready(function () {
+        $('figure.hljs').each(function(i, figure) {
+          var codeId = 'code-' + i;
+          var code = figure.querySelector('.code');
+          var copyButton = $('<button>Copy <i class="far fa-clipboard"></i></button>');
+          code.id = codeId;
+          copyButton.addClass('clipboard-btn');
+          copyButton.attr('data-clipboard-target-id', codeId);
+
+          var figcaption = figure.querySelector('figcaption');
+
+          if (figcaption) {
+            figcaption.append(copyButton[0]);
+          } else {
+            figure.prepend(copyButton[0]);
+          }
+        })
+
+        var clipboard = new ClipboardJS('.clipboard-btn', {
+          target: function(trigger) {
+            return document.getElementById(trigger.getAttribute('data-clipboard-target-id'));
+          }
+        });
+        clipboard.on('success', function(e) {
+          e.clearSelection();
+        })
+      })
+    </script>
+
+    
+    
+
+    
+
+
+<script src="/js/script.js"></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-mask"></div>
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+</body>
+</html>

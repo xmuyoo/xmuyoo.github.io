@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+<head>
+    <meta charset="utf-8">
+<title>Kafka 配置项 - 潇慕雨Muyoo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
+
+
+
+
+<meta name="description" content="Keep thinking, keep learning, keep working">
+
+
+
+
+
+    <meta name="description" content="Kafka 部分配置项本文只记录一些目前使用Kafka可能会比较有用的配置项。关于单个broker的，和关于topic-level的。其中有些配置项可以是topic级别的。Kafka的版本是0.8.2.1。  log.flush.interval：默认500，数据积累的量，超过这个量就将数据写到磁盘 log.default.flush.interval.ms：数据写到磁盘的间隔时间，毫秒。默认与">
+<meta name="keywords" content="Kafka,Messaging System,Config">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka 配置项">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2015&#x2F;10&#x2F;22&#x2F;KafkaConfig&#x2F;index.html">
+<meta property="og:site_name" content="潇慕雨Muyoo">
+<meta property="og:description" content="Kafka 部分配置项本文只记录一些目前使用Kafka可能会比较有用的配置项。关于单个broker的，和关于topic-level的。其中有些配置项可以是topic级别的。Kafka的版本是0.8.2.1。  log.flush.interval：默认500，数据积累的量，超过这个量就将数据写到磁盘 log.default.flush.interval.ms：数据写到磁盘的间隔时间，毫秒。默认与">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;照片133.jpg">
+<meta property="og:updated_time" content="2015-10-22T09:26:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;7vzs9m.com1.z0.glb.clouddn.com&#x2F;照片133.jpg">
+
+
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ovo|Source+Code+Pro">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/css/justifiedGallery.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css">
+
+<link rel="stylesheet" href="/css/style.css">
+
+<script defer src="//use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+
+</head>
+<body>
+    
+<nav class="navbar is-transparent is-fixed-top navbar-main" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item navbar-logo" href="/">
+                
+                    
+                    潇慕雨 Muyoo
+                    
+                
+            </a>
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="navbar-menu navbar-start">
+            
+            <a class="navbar-item "
+               href="/archives">Archives</a>
+            
+            <a class="navbar-item "
+               href="/categories">Technology</a>
+            
+            <a class="navbar-item "
+               href="/about">About</a>
+            
+        </div>
+        
+        <div class="navbar-menu navbar-end">
+            
+            <a class="navbar-item search" title="Search" href="javascript:;" target="_blank" rel="noopener">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            
+            
+            <a class="navbar-item" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+               
+            
+        </div>
+    </div>
+</nav>
+
+    <section class="section">
+    <div class="container">
+    <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            Kafka 配置项
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            <time datetime="2015-10-22T09:26:25.000Z" itemprop="datePublished">Oct 22 2015</time>
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><span>></span><a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/Kafka/">Kafka</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            3 minutes read (About 446 words)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <p><img src="http://7vzs9m.com1.z0.glb.clouddn.com/照片133.jpg" alt="世界尽头的晨曦让我这么怀念 在冰岛北部，几乎走到哪里都可以见到这座美丽的火山 - By Muyoo"></p>
+<h3 id="Kafka-部分配置项"><a href="#Kafka-部分配置项" class="headerlink" title="Kafka 部分配置项"></a>Kafka 部分配置项</h3><p>本文只记录一些目前使用Kafka可能会比较有用的配置项。关于单个broker的，和关于topic-level的。其中有些配置项可以是topic级别的。<br>Kafka的版本是0.8.2.1。</p>
+<ul>
+<li>log.flush.interval：默认500，数据积累的量，超过这个量就将数据写到磁盘</li>
+<li>log.default.flush.interval.ms：数据写到磁盘的间隔时间，毫秒。默认与log.default.flush.scheduler.interval.ms相同，3000。</li>
+<li>log.retention.hours：数据保留的时间，小时。默认168</li>
+<li>log.segment.bytes：数据文件大小，默认是1024<em>1024</em>1024</li>
+<li>log.roll.{ms,hours}：数据文件切分的时间间隔，与大小限制同时起作用的，默认是24*7小时</li>
+<li>log.cleanup.policy：处理切分后数据的方式，delete或者compact。如果是delete，被切分出来的数据会被删除；如果是compact，切分出的数据会被压缩用于淘汰过期的数据。</li>
+<li>log.cleaner.min.cleanable.ratio：</li>
+<li>min.insync.replicas：</li>
+<li>log.roll.jitter.{ms,hours}：</li>
+</ul>
+<h4 id="Topic-Level"><a href="#Topic-Level" class="headerlink" title="Topic-Level"></a>Topic-Level</h4><ul>
+<li>topic.flush.intervals.ms：覆盖log.default.flush.interval.ms。</li>
+<li>topic.log.retention.hours：覆盖log.retention.hours</li>
+<li>topic.partition.count.map：覆盖创建topic时指定的partition数量。</li>
+<li>topic.log.segment.bytes：覆盖log.segment.bytes</li>
+<li>topic.log.roll.{ms,hours}：覆盖log.roll.{ms,hours}</li>
+<li>topic.log.cleanup.policy：覆盖log.cleanup.policy</li>
+<li>min.cleanable.dirty.ratio：覆盖log.cleaner.min.cleanable.ratio</li>
+<li>min.insync.replicas：覆盖min.insync.replicas</li>
+<li>segment.jitter.ms：覆盖log.roll.jitter.{ms,hours}</li>
+</ul>
+<p>官方的topic level配置项：<a href="http://kafka.apache.org/documentation.html#topic-config" target="_blank" rel="noopener">topic level</a></p>
+
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Kafka/">#Kafka</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Messaging-System/">#Messaging System</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Config/">#Config</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop  article-nav-prev">
+            
+            <a href="/2015/12/15/StreamDataCentral/">流数据平台阅读笔记</a>
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop  article-nav-next">
+            
+            <a href="/2015/10/20/KafkaMirror/">Kafka 水平扩展、集群镜像</a>
+            
+        </span>
+    </div>
+    
+</article>
+
+
+
+
+    </div>
+</section>
+    <footer class="footer">
+    <div class="container">
+        <div class="columns content">
+            <div class="column is-narrow has-text-centered">
+                &copy; 2019 Muyoo&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+            </div>
+            <div class="column is-hidden-mobile"></div>
+
+            
+            <div class="column is-narrow">
+                <div class="columns is-mobile is-multiline is-centered">
+                
+                    
+                <a class="column is-narrow has-text-black" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                    
+                    GitHub
+                    
+                </a>
+                
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</footer>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+
+<!-- test if the browser is outdated -->
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/" target="_blank" rel="noopener">Update my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // plugin function, place inside DOM ready function
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        })
+    });
+</script>
+
+<script>
+    window.FontAwesomeConfig = {
+        searchPseudoElements: true
+    }
+    moment.locale("en-AU");
+</script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+</script>
+
+    
+    
+    
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/js/lightgallery-all.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/js/jquery.justifiedGallery.min.js"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            if (typeof($.fn.lightGallery) === 'function') {
+                $('.article.gallery').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof($.fn.justifiedGallery) === 'function') {
+                $('.justified-gallery').justifiedGallery();
+            }
+        });
+    })(jQuery);
+</script>
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <style>
+        .hljs {
+            position: relative;
+        }
+
+        .hljs .clipboard-btn {
+            float: right;
+            color: #9a9a9a;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .hljs .clipboard-btn:hover {
+          color: #8a8a8a;
+        }
+
+        .hljs > .clipboard-btn {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 4px;
+        }
+
+        .hljs:hover > .clipboard-btn {
+            display: inline;
+        }
+
+        .hljs > figcaption > .clipboard-btn {
+            margin-right: 4px;
+        }
+    </style>
+    <script>
+      $(document).ready(function () {
+        $('figure.hljs').each(function(i, figure) {
+          var codeId = 'code-' + i;
+          var code = figure.querySelector('.code');
+          var copyButton = $('<button>Copy <i class="far fa-clipboard"></i></button>');
+          code.id = codeId;
+          copyButton.addClass('clipboard-btn');
+          copyButton.attr('data-clipboard-target-id', codeId);
+
+          var figcaption = figure.querySelector('figcaption');
+
+          if (figcaption) {
+            figcaption.append(copyButton[0]);
+          } else {
+            figure.prepend(copyButton[0]);
+          }
+        })
+
+        var clipboard = new ClipboardJS('.clipboard-btn', {
+          target: function(trigger) {
+            return document.getElementById(trigger.getAttribute('data-clipboard-target-id'));
+          }
+        });
+        clipboard.on('success', function(e) {
+          e.clearSelection();
+        })
+      })
+    </script>
+
+    
+    
+
+    
+
+
+<script src="/js/script.js"></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-mask"></div>
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+</body>
+</html>
