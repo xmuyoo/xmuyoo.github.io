@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+<head>
+    <meta charset="utf-8">
+<title>Flink 扯蛋 —— Window - 潇慕雨 Muyoo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css">
+
+
+
+
+<meta name="description" content="Keep thinking, keep learning, keep working">
+
+
+
+
+
+    <meta name="description" content="流计算中的 Window首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。 数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。 Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，目">
+<meta name="keywords" content="Flink,Window,流计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flink 扯蛋 —— Window">
+<meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2019&#x2F;10&#x2F;21&#x2F;Flink-WindowAndTime&#x2F;index.html">
+<meta property="og:site_name" content="潇慕雨 Muyoo">
+<meta property="og:description" content="流计算中的 Window首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。 数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。 Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，目">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2019&#x2F;10&#x2F;21&#x2F;Flink-WindowAndTime&#x2F;images&#x2F;window-mechanics.webp">
+<meta property="og:updated_time" content="2019-10-21T03:28:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2019&#x2F;10&#x2F;21&#x2F;Flink-WindowAndTime&#x2F;images&#x2F;window-mechanics.webp">
+
+
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ovo|Source+Code+Pro">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/css/justifiedGallery.min.css">
+
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css">
+
+<link rel="stylesheet" href="/css/style.css">
+
+<script defer src="//use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+
+</head>
+<body>
+    
+<nav class="navbar is-transparent is-fixed-top navbar-main" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item navbar-logo" href="/">
+                
+                    
+                    潇慕雨 Muyoo
+                    
+                
+            </a>
+            <div class="navbar-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="navbar-menu navbar-start">
+            
+            <a class="navbar-item "
+               href="/archives">Archives</a>
+            
+            <a class="navbar-item "
+               href="/categories">Technology</a>
+            
+            <a class="navbar-item "
+               href="/tags">Tags</a>
+            
+            <a class="navbar-item "
+               href="/about">About</a>
+            
+        </div>
+        
+        <div class="navbar-menu navbar-end">
+            
+            <a class="navbar-item search" title="Search" href="javascript:;">
+                <i class="fas fa-search"></i>
+            </a>
+            
+            
+            
+            <a class="navbar-item" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+               
+            
+        </div>
+    </div>
+</nav>
+
+    <section class="section">
+    <div class="container">
+    <article class="article content gallery" itemscope itemprop="blogPost">
+    <h1 class="article-title is-size-3 is-size-4-mobile" itemprop="name">
+        
+            Flink 扯蛋 —— Window
+        
+    </h1>
+    <div class="article-meta columns is-variable is-1 is-multiline is-mobile is-size-7-mobile">
+        <span class="column is-narrow">
+            <time datetime="2019-10-21T03:28:32.000Z" itemprop="datePublished">Oct 21 2019</time>
+        </span>
+        
+        <span class="column is-narrow article-category">
+            <i class="far fa-folder"></i>
+            <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><span>></span><a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/%E6%B5%81%E8%AE%A1%E7%AE%97/">流计算</a>
+        </span>
+        
+        
+        <span class="column is-narrow">
+            
+            
+            14 minutes read (About 2102 words)
+        </span>
+        
+    </div>
+    <div class="article-entry is-size-6-mobile" itemprop="articleBody">
+    
+        <h2 id="流计算中的-Window"><a href="#流计算中的-Window" class="headerlink" title="流计算中的 Window"></a>流计算中的 Window</h2><p>首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。</p>
+<p>数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。</p>
+<p>Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，目的是得到一个有边界的数据集合。因为 Window 有边界，所以被划到一个 Window 中的数据集合也变成了有边界、有限的。现在，有边界的计算就能够处理这同样有边界的数据集合了。</p>
+<p>流计算中，定义 Window 边界的维度只有：时间。一个 Window 的下界是较早的时间点，上界是较晚的时间点。在某一时刻去观察一个 Window 时，它的上下界是确定的，被它的上下界划定的数据集合是确定的。而定义一个 Window 的长度的维度有：时间或元素数量。</p>
+<h2 id="Flink-中的-Window"><a href="#Flink-中的-Window" class="headerlink" title="Flink 中的 Window"></a>Flink 中的 Window</h2><p>在 Flink 中，Window 的概念与上面解释的概念并无区别，只是作为流计算的工程实现结果，Flink 对 Window 在具体表现方式上定义了不同的类型。</p>
+<h3 id="Window-的种类"><a href="#Window-的种类" class="headerlink" title="Window 的种类"></a>Window 的种类</h3><p><strong>Time Tumbling Window</strong> 是一种边界相对固定的窗口，其它一些地方也称之为 Fixed Window。这种窗口的特点是：若有多个窗口，它们各自定义的时间范围不会有交集：</p>
+<p>$$<br>T_i \bigcap T_j \in \varnothing<br>$$</p>
+<p>但两个窗口各自定义的时间边界可能是连在一起的。理论上严格来说，在这种窗口内的数据同样是永无止境的。但由于我们已经为它添加了一个时间边界的约束条件，所以我们通常认为它是类似有限并且可计算的。</p>
+<blockquote>
+<p>例如定义两个 Window：$W_1 = [10:00,11:00)$ 和 $W_2 = [11:00, 12:00)$。所有符合这两个窗口所定义的时间边界的数据都会被分配到对应的窗口中。</p>
+</blockquote>
+<p><strong>Time Sliding Window</strong> 是一种边界会随着时间移动而改变的窗口。通常我们直接定义的是这种窗口的时间长度，例如“最近 1 小时”、“最近 5 分钟”、“30 分钟前的 1 小时” 等。多个窗口之间的时间范围，可能是有交集的：<br>$$<br>T_i \bigcap T_j \notin \varnothing<br>$$</p>
+<p>在这种窗口下，一个数据元素很可能被划定到多个窗口中。和 Time Tumbling Window 类似，理论上这种窗口内的数据也是无限的。</p>
+<blockquote>
+<p>例如定义两个窗口：$W_1 = [10:00, 11:00]$ 和 $W_2 = [10:30, 11:30]$，以及数据元素 $e = 10:25$。此时，$e$ 既属于 $W_1$ 也属于 $W_2$。</p>
+</blockquote>
+<p><strong>Count Tumbling Window</strong> 是一种边界会随时间变化而推移的窗口，当元素数量达到窗口长度时，窗口固定。我们通常只声明窗口长度。在这种窗口内，数据元素数量是有限的，但时间边界可能永远不会固定下来。多个窗口之间的元素集合没有交集，因为它定义的是“每 N 个元素在一个窗口内”。</p>
+<blockquote>
+<p>例如定义： $W_1, \space with \space max(count) = 100$，那么数据流上每 100 个元素为一个窗口；当一个窗口中的元素永远达不到 100 时，这个窗口的上界就会一直推移下去；这个窗口的边界也就不会确定。</p>
+</blockquote>
+<p><strong>Count Sliding Window</strong> 同样这种窗口的边界会随时间变化而推移。与 Count Tumbling Window 类似的是，我们通常只声明窗口的长度；而与之不同的是，它的推移方式是以窗口的单位长度进行推移，而不是窗口的整体长度，比如“最近 100 个元素”，“最近 50 个元素”等。多个窗口之间的元素集合可能是有交集的。</p>
+<h3 id="数据在-Window-中是怎么流转的"><a href="#数据在-Window-中是怎么流转的" class="headerlink" title="数据在 Window 中是怎么流转的"></a>数据在 Window 中是怎么流转的</h3><p>在这借助 Flink 官方的示意图：</p>
+<p><img src="images/window-mechanics.webp" alt="Window Mechianics"></p>
+<p>从一个数据元素进入流开始，WindowAssigner 为这个数据元素分配一个 Window；接着，Trigger 检查这个 Window 的输出条件是否被满足。如果条件达到了，并且也有一个 Evictor，那么 Trigger 将此时 Window 中所有的数据元素交给 Evictor；如果没有 Evictor，那么 Trigger 就直接将这些数据元素交给 EventFunction。Evictor 在收到数据元素后过滤掉不需要的数据元素，然后再将数据交给 EventFunction。EventFunction 收到数据后，就开始对数据元素做计算的工作（例如求和、计数），最后将结果输出。</p>
+<p><strong>Trigger</strong> 的功能是检测是否满足输出窗口内数据的条件，然后将数据输出；并决定是否继续保留这个窗口。为 Trigger 声明的检测条件是自定义的。</p>
+<blockquote>
+<p>之前介绍的两种 Count Window 理论上其时间边界依然是无限延续的，但通过 Trigger 设置一个最长的等待时间后，就可以使 Count Window 不必永远等待下去。与 Count Window 的思路类似，Time Window 的每个窗口内的元素数量理论上同样是无穷的。但通过 Window Assigner 和 Trigger 的协助，Window Assigner 可以将时间不被接受的数据元素拒之门外，同时 Trigger 也可以通过设置一个窗口内的元素数量上限来使窗口内的元素数据量变为有限的。</p>
+</blockquote>
+<p><strong>Evictor</strong> 数据的过滤器，它的功能是在接收到 Trigger 传递的数据元素后，按照声明的过滤条件将数据过滤一遍。</p>
+<p><strong>Evaluation Function</strong> 它的功能是对数据元素做计算操作，例如求和、计数、求最大值或是其它一般操作。它的计算结果可能是多个的。</p>
+<p>这些组件在 Flink 中均可以通过 <code>DataStream API</code> 来使用。</p>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><h3 id="扯一下流中的时间"><a href="#扯一下流中的时间" class="headerlink" title="扯一下流中的时间"></a>扯一下流中的时间</h3><p>在计算机的世界里没有绝对准确的时间。这是因为在我们的现实世界中，绝对时间就不存在。作为三次元的生物，我们只能参考物质变化的表现来间接地感知“时间”这个四维空间中的维度变化。为了直观地记录时间，我们使用了 “时钟”。</p>
+<p>当使用不同的时钟时，记录的时间值可能不同（例如我们常说的“钟快了”、“钟慢了”）。在流计算的体系里，这种不同体现在“数据产生的时间”和“在系统内数据被处理时的时间”上。这两种时间通常是不一样的。在计算时，需要选择其中一种来定义 Window 的边界。</p>
+<blockquote>
+<p>备注：所谓的“真正准确的时间”在计算的世界里，通常被称为墙上时钟，而墙上时钟是不存在的。现实世界中使用铯-133 原子基态的两个超精细能级之间跃迁所对应的辐射（电磁波）的 9192631770 个周期持续的时间来定义“1 秒”的单位时间。而这也使用了原子作为参照物。<br>所幸的是，在数据计算的过程中，我们通常不需要知道墙上时钟真正的值是多少；我们关心的通常是一个“边界”和“先后顺序”。</p>
+</blockquote>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://flink.apache.org/news/2015/12/04/Introducing-windows.html" target="_blank" rel="noopener">Flink Introducing Windows</a></li>
+<li><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.9/concepts/programming-model.html#windows" target="_blank" rel="noopener">Flink Windows</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Second" target="_blank" rel="noopener">Second</a></li>
+</ul>
+
+    
+    </div>
+    
+    <div class="columns is-variable is-1 is-multiline is-mobile">
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Flink/">#Flink</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/Window/">#Window</a></span>
+    
+        <span class="column is-narrow"><a class="tag is-light article-tag" href="/tags/%E6%B5%81%E8%AE%A1%E7%AE%97/">#流计算</a></span>
+    
+    </div>
+    
+    
+    <div class="columns is-mobile is-multiline article-nav">
+        <span class="column is-12-mobile is-half-desktop is-hidden-mobile article-nav-prev">
+            
+        </span>
+        <span class="column is-12-mobile is-half-desktop  article-nav-next">
+            
+            <a href="/2016/12/07/LogisticRegressionNote/">逻辑回归的笔记</a>
+            
+        </span>
+    </div>
+    
+</article>
+
+
+
+
+    </div>
+</section>
+    <footer class="footer">
+    <div class="container">
+        <div class="columns content">
+            <div class="column is-narrow has-text-centered">
+                &copy; 2019 Muyoo&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                        href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+            </div>
+            <div class="column is-hidden-mobile"></div>
+
+            
+            <div class="column is-narrow">
+                <div class="columns is-mobile is-multiline is-centered">
+                
+                    
+                <a class="column is-narrow has-text-black" title="GitHub" href="https://github.com/ppoffice/hexo-theme-minos" target="_blank" rel="noopener">
+                    
+                    GitHub
+                    
+                </a>
+                
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</footer>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+
+<!-- test if the browser is outdated -->
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/" target="_blank" rel="noopener">Update my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // plugin function, place inside DOM ready function
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        })
+    });
+</script>
+
+<script>
+    window.FontAwesomeConfig = {
+        searchPseudoElements: true
+    }
+    moment.locale("default");
+</script>
+
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        "HTML-CSS": {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+</script>
+
+    
+    
+    
+    
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.8/js/lightgallery-all.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/justifiedGallery/3.6.5/js/jquery.justifiedGallery.min.js"></script>
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            if (typeof($.fn.lightGallery) === 'function') {
+                $('.article.gallery').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof($.fn.justifiedGallery) === 'function') {
+                $('.justified-gallery').justifiedGallery();
+            }
+        });
+    })(jQuery);
+</script>
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <style>
+        .hljs {
+            position: relative;
+        }
+
+        .hljs .clipboard-btn {
+            float: right;
+            color: #9a9a9a;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .hljs .clipboard-btn:hover {
+          color: #8a8a8a;
+        }
+
+        .hljs > .clipboard-btn {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 4px;
+        }
+
+        .hljs:hover > .clipboard-btn {
+            display: inline;
+        }
+
+        .hljs > figcaption > .clipboard-btn {
+            margin-right: 4px;
+        }
+    </style>
+    <script>
+      $(document).ready(function () {
+        $('figure.hljs').each(function(i, figure) {
+          var codeId = 'code-' + i;
+          var code = figure.querySelector('.code');
+          var copyButton = $('<button>Copy <i class="far fa-clipboard"></i></button>');
+          code.id = codeId;
+          copyButton.addClass('clipboard-btn');
+          copyButton.attr('data-clipboard-target-id', codeId);
+
+          var figcaption = figure.querySelector('figcaption');
+
+          if (figcaption) {
+            figcaption.append(copyButton[0]);
+          } else {
+            figure.prepend(copyButton[0]);
+          }
+        })
+
+        var clipboard = new ClipboardJS('.clipboard-btn', {
+          target: function(trigger) {
+            return document.getElementById(trigger.getAttribute('data-clipboard-target-id'));
+          }
+        });
+        clipboard.on('success', function(e) {
+          e.clearSelection();
+        })
+      })
+    </script>
+
+    
+    
+
+    
+
+
+<script src="/js/script.js"></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-mask"></div>
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="Type something..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+</body>
+</html>
