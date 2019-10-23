@@ -16,13 +16,13 @@
 
 
 
-    <meta name="description" content="之前使用逻辑回归时就接触到里面的sigmod函数，就有疑问为什么会想到用这个函数把线性回归的值压缩到0到1之间；而看到的介绍逻辑回归的公开课、文章，大多数都对此没有详细说明。所以现在又把LR拿出来，记录下从别人文章里学到的解释，同时也理一理逻辑回归的过程和现在的一些理解。 有错误、不当之处欢迎指出！ 线性回归在这之前，需要先提一下线性回归。 线性回归比较简单，从二维的空间比较容易从直观上理解：给定">
+    <meta name="description" content="之前使用逻辑回归时就接触到里面的sigmod函数，就有疑问为什么会想到用这个函数把线性回归的值压缩到0到1之间；而看到的介绍逻辑回归的公开课、文章，大多数都对此没有详细说明。所以现在又把LR拿出来，记录下从别人文章里学到的解释，同时也理一理逻辑回归的过程和现在的一些理解。 有错误、不当之处欢迎指出！ 线性回归在这之前，需要先提一下线性回归。 线性回归比较简单，从二维的空间比较容易从直观上理解：给">
 <meta name="keywords" content="Logistic Regression,Linear Regression,MLE,逻辑回归,极大似然估计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="逻辑回归的笔记">
 <meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2016&#x2F;12&#x2F;07&#x2F;LogisticRegressionNote&#x2F;index.html">
 <meta property="og:site_name" content="潇慕雨 Muyoo">
-<meta property="og:description" content="之前使用逻辑回归时就接触到里面的sigmod函数，就有疑问为什么会想到用这个函数把线性回归的值压缩到0到1之间；而看到的介绍逻辑回归的公开课、文章，大多数都对此没有详细说明。所以现在又把LR拿出来，记录下从别人文章里学到的解释，同时也理一理逻辑回归的过程和现在的一些理解。 有错误、不当之处欢迎指出！ 线性回归在这之前，需要先提一下线性回归。 线性回归比较简单，从二维的空间比较容易从直观上理解：给定">
+<meta property="og:description" content="之前使用逻辑回归时就接触到里面的sigmod函数，就有疑问为什么会想到用这个函数把线性回归的值压缩到0到1之间；而看到的介绍逻辑回归的公开课、文章，大多数都对此没有详细说明。所以现在又把LR拿出来，记录下从别人文章里学到的解释，同时也理一理逻辑回归的过程和现在的一些理解。 有错误、不当之处欢迎指出！ 线性回归在这之前，需要先提一下线性回归。 线性回归比较简单，从二维的空间比较容易从直观上理解：给">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;images&#x2F;%E5%A4%A7%E7%90%86105.webp">
 <meta property="og:updated_time" content="2016-12-07T01:00:00.000Z">
@@ -148,7 +148,8 @@
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
-        <p>之前使用逻辑回归时就接触到里面的sigmod函数，就有疑问为什么会想到用这个函数把线性回归的值压缩到0到1之间；而看到的介绍逻辑回归的公开课、文章，大多数都对此没有详细说明。所以现在又把LR拿出来，记录下从别人文章里学到的解释，同时也理一理逻辑回归的过程和现在的一些理解。</p>
+        <p><img src="/images/%E5%A4%A7%E7%90%86105.webp" alt="这里少通汽车，每天只有几班车通往外界，却是自我归零的佳地。—— By Muyoo"></p>
+<p>之前使用逻辑回归时就接触到里面的sigmod函数，就有疑问为什么会想到用这个函数把线性回归的值压缩到0到1之间；而看到的介绍逻辑回归的公开课、文章，大多数都对此没有详细说明。所以现在又把LR拿出来，记录下从别人文章里学到的解释，同时也理一理逻辑回归的过程和现在的一些理解。</p>
 <p>有错误、不当之处欢迎指出！</p>
 <h3 id="线性回归"><a href="#线性回归" class="headerlink" title="线性回归"></a>线性回归</h3><p>在这之前，需要先提一下线性回归。</p>
 <p>线性回归比较简单，从二维的空间比较容易从直观上理解：给定了一组点，然后找到一条线能够拟合这些点。这里所说的“点”就是我们拿到的样本，“线”就是我们要找到的模型（或者说函数）。</p>
@@ -205,7 +206,6 @@
 <li><a href="http://www.hanlongfei.com/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2015/08/05/mle" target="_blank" rel="noopener">机器学习－逻辑回归与最大似然估计</a></li>
 <li><a href="https://www.cnblogs.com/liliu/archive/2010/11/24/1886110.html" target="_blank" rel="noopener">极大似然估计</a></li>
 </ul>
-<p><img src="/images/%E5%A4%A7%E7%90%86105.webp" alt="这里少通汽车，每天只有几班车通往外界，却是自我归零的佳地。—— By Muyoo"></p>
 
     
     </div>

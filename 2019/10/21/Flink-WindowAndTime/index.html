@@ -16,18 +16,19 @@
 
 
 
-    <meta name="description" content="流计算中的 Window首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。 数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。 Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，目">
+    <meta name="description" content="流计算中的 Window首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。 数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。 Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，">
 <meta name="keywords" content="Flink,Window,流计算">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flink 扯蛋 —— Window">
 <meta property="og:url" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;2019&#x2F;10&#x2F;21&#x2F;Flink-WindowAndTime&#x2F;index.html">
 <meta property="og:site_name" content="潇慕雨 Muyoo">
-<meta property="og:description" content="流计算中的 Window首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。 数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。 Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，目">
+<meta property="og:description" content="流计算中的 Window首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。 数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。 Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，">
 <meta property="og:locale" content="en">
+<meta property="og:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;images&#x2F;Spain-163208.webp">
 <meta property="og:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;images&#x2F;window-mechanics.webp">
 <meta property="og:updated_time" content="2019-10-21T03:28:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;images&#x2F;window-mechanics.webp">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;www.xmuyoo.com&#x2F;images&#x2F;Spain-163208.webp">
 
 
 
@@ -142,13 +143,14 @@
         <span class="column is-narrow">
             
             
-            14 minutes read (About 2103 words)
+            14 minutes read (About 2133 words)
         </span>
         
     </div>
     <div class="article-entry is-size-6-mobile" itemprop="articleBody">
     
-        <h2 id="流计算中的-Window"><a href="#流计算中的-Window" class="headerlink" title="流计算中的 Window"></a>流计算中的 Window</h2><p>首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。</p>
+        <p><img src="/images/Spain-163208.webp" alt="由建筑给内心带来的平静，这种体验还是第一次感受 —— By Muyoo"></p>
+<h2 id="流计算中的-Window"><a href="#流计算中的-Window" class="headerlink" title="流计算中的 Window"></a>流计算中的 Window</h2><p>首先，我们需要时刻铭记的是：在流计算中，数据永不停歇、永无止境。也就是说，在流计算的体系中数据是无限的。这一点和其它绝大多数计算场景非常不同。</p>
 <p>数据无止境，但计算是有边界的。如何让有边界的计算去处理一个无边界的数据？这就在流计算中引入了 Window 的概念。</p>
 <p>Window 在流计算中就是指一个数据窗口，Window 定义了一个边界。它将数据流上的部分数据划入边界范围内，目的是得到一个有边界的数据集合。因为 Window 有边界，所以被划到一个 Window 中的数据集合也变成了有边界、有限的。现在，有边界的计算就能够处理这同样有边界的数据集合了。</p>
 <a id="more"></a>
